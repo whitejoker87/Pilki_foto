@@ -19,6 +19,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,8 +31,29 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+//import org.w3c.dom.Document;
+//import org.w3c.dom.Element;
+//import org.w3c.dom.NodeList;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -62,10 +85,18 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
     private View mProgressView;
     private View mLoginFormView;
 
+    public static String LOG_TAG = "my_log";
+
+    public static ArrayList<RowBrouser> listBrouser;
+    RowBrowserAdapter rowBrowserAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
+        rowBrowserAdapter = new RowBrowserAdapter(this, listBrouser);
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -308,12 +339,138 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
+
+
+            //HttpURLConnection urlConnection = null;
+            //BufferedReader reader = null;
+
+                /*try {
+                    URL url = new URL(Constant.IP_ADR + "REST/1.0/search/ticket");
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("POST");
+
+                    String urlParameters = "user=" +mLogin+ "&pass=" +mPassword+ "&query=Owner='Nobody'AND(Status='new'ORStatus='open')";
+
+                    // Посылаем POST запрос с данными пользователя(для авторизации запроса) и критериями отбора заявок
+                    urlConnection.setDoOutput(true);
+                    DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
+                    wr.writeBytes(urlParameters);
+                    wr.flush();
+                    wr.close();
+
+                    Log.d(LOG_TAG,"\nSending 'POST' request to URL : " + url);
+                    Log.d(LOG_TAG,"Post parameters : " + urlParameters);
+
+                    //Получаем заявки пользователя и форматируем их
+                    InputStream inputStream = urlConnection.getInputStream();
+
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line;
+                    int i = 0;//счетчик для строк(нужен для избавления от пустых и служебных строк)
+                    Constant constant = new Constant();
+                    while ((line = reader.readLine()) != null) {
+                        HashMap temp = new HashMap();
+                        Log.d(LOG_TAG, "вывод line " + line);
+                        String[] array = line.split(":", 2);//Разделяем полученную строку на номер заявки и тему
+                        if (i > 1) {//не закончится на 2 пустой строчке
+                            if (array.length < 2) break;//но закончится на первой пустой после перечисления заявок
+                        }
+                        Log.d(LOG_TAG, "длина массива " + array.length);//отсеиваем все строки с заявками(они разделены ":")
+                        if (array.length > 1) {
+                            temp.put(ID_COLUMN, array[0]);
+                            temp.put(SUBJECT_COLUMN, array[1]);
+                            Log.d(LOG_TAG, "вывод temp " + temp);
+                            nobodyTicketsArrayList.add(temp);//заносим информацию в массив
+                            i++;
+                            //Первая строка со служебной информацией исключается из массива т.к. там нет ":"
+                            //и из нее получается массив размером 1
+
+                            setAddTicketNumber(array[0]);//добавляем номер заявки в массив с номерами заявок
+                            Log.d(LOG_TAG, "содержимое adapterArrayList" + getTicketNumberArrayList());
+                        }
+                    }
+
+
+                    reader.close();
+
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                return nobodyTicketsArrayList;*/
+
+
+
+
+
+
+
+
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
+                //URL imgUrl = new URL("http://84.52.96.184:8088/");
+                String url ="http://84.52.96.184:8088";
+                String username ="pilki";
+                String password ="pilkifoto";
+
+                String login = username + ":" + password;
+                String base64login = new String(Base64.encode(login.getBytes(), Base64.DEFAULT));
+
+                Document document = Jsoup
+                        .connect(url)
+                        .header("Authorization", "Basic " + base64login)
+                        .referrer("http://84.52.96.184:8088/")
+                        .get();
+                //
+
+                Element tableForParse = document.getElementById("files");
+                Elements rowsTable = tableForParse.select("tr");
+
+                String _title = "", _size = "", _timeStamp = "", _hints = "";
+
+                for (int i = 0; i < rowsTable.size(); i++) {
+                    Element row = rowsTable.get(i);
+                    Elements cols = row.select("td");
+                    for (int j = 0; j < cols.size(); j++) {
+                        //listBrouser.add(e.text().toString());
+                        switch (j) {
+                            case 0:
+                                //todo:сделать парсинг ссылки
+                                _title = (cols.get(j)).text();
+                                break;
+                            case 1:
+                                _size = (cols.get(j)).text();
+                                break;
+                            case 2:
+                                _timeStamp = (cols.get(j)).text();
+                                break;
+                            case 3:
+                                _hints = (cols.get(j)).text();
+                                break;
+                        }
+                    }
+                }
+                RowBrouser getRSS = new RowBrouser(false,_title, _size, _timeStamp, _hints);
+                listBrouser.add(getRSS);//добавляем элемени в список
+
+                /*HttpURLConnection urlConnection = (HttpURLConnection) imgUrl.openConnection();
+                urlConnection.setUseCaches(false);
+                urlConnection.setRequestProperty("Authorization", "basic " +
+                        Base64.encode("user:pass".getBytes(),Base64.NO_WRAP ));
+                urlConnection.setConnectTimeout(30000);
+                urlConnection.setReadTimeout(30000);
+                urlConnection.setInstanceFollowRedirects(true);
+                InputStream is = urlConnection.getInputStream();
+                if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {//проверка доступности
+                    InputStream inputStream = urlConnection.getInputStream();*/
+                } catch (Exception e) {
+                e.printStackTrace();
             }
+
+
+
+
+
 
             for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
