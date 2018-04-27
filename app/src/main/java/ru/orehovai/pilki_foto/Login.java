@@ -3,6 +3,7 @@ package ru.orehovai.pilki_foto;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -99,7 +100,7 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-
+        listBrowser = new ArrayList<>();
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -225,7 +226,7 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         }
     }
 
-    private boolean isEmailValid(String email) {
+   /* private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
     }
@@ -233,7 +234,7 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 4;
-    }
+    }*/
 
     /**
      * Shows the progress UI and hides the login form.
@@ -341,21 +342,26 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+            String base64login= null;
+            int responseStatusCode = 0;
             try {
                 String url ="http://84.52.96.184:8088";
                 String username ="pilki";
                 String password ="pilkifoto";
 
                 String login = username + ":" + password;
-                String base64login = new String(Base64.encode(login.getBytes(), Base64.DEFAULT));
+                base64login = new String(Base64.encode(login.getBytes(), Base64.DEFAULT));
 
                 Connection connection = Jsoup
                                         .connect(url)
+                                        .userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36")
+                                        .ignoreHttpErrors(true)
+                                        .timeout(0)
                                         .header("Authorization", "Basic " + base64login)
                                         .referrer("http://84.52.96.184:8088/");
                 Connection.Response response = connection.execute();
                 Document doc = null;
+                responseStatusCode = response.statusCode();
                 if(response.statusCode() == 200) {
                     doc = connection.get();
                     Element tableForParse = doc.getElementById("files");
@@ -389,13 +395,15 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
                     listBrowser.add(getRSS);//добавляем элемени в список
                 }
                 else {
-                    System.out.println("received error code : " + response.statusCode());
-                    RowBrouser getRSS = new RowBrouser(false,"Error", " " + response.statusCode(), null, null);
+                    RowBrouser getRSS = new RowBrouser(false,"Error", " " + response.statusCode(), base64login, null);
                     listBrowser.add(getRSS);//добавляем элемени в список
 
                 }
                 } catch (Exception e) {
                 e.printStackTrace();
+                RowBrouser getRSS = new RowBrouser(false,"Error", " " + e, responseStatusCode + "", base64login);
+                listBrowser.add(getRSS);//добавляем элемени в список
+
             }
 
 
@@ -421,6 +429,7 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             showProgress(false);
 
             if (success) {
+                startActivity(new Intent(Login.this, Main.class));
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
