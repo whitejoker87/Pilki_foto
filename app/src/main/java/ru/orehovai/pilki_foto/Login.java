@@ -71,9 +71,9 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
+    /*private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
-    };
+    };*/
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -87,15 +87,19 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
 
     public static String LOG_TAG = "my_log";
 
-    public static ArrayList<RowBrouser> listBrouser;
-    RowBrowserAdapter rowBrowserAdapter;
+    public static ArrayList<RowBrouser> getListBrowser() {
+        return listBrowser;
+    }
+
+    static ArrayList<RowBrouser> listBrowser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        rowBrowserAdapter = new RowBrowserAdapter(this, listBrouser);
+
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -191,7 +195,7 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        /*if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -206,7 +210,7 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
-        }
+        }*/
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -338,77 +342,7 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-
-
-
-            //HttpURLConnection urlConnection = null;
-            //BufferedReader reader = null;
-
-                /*try {
-                    URL url = new URL(Constant.IP_ADR + "REST/1.0/search/ticket");
-
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("POST");
-
-                    String urlParameters = "user=" +mLogin+ "&pass=" +mPassword+ "&query=Owner='Nobody'AND(Status='new'ORStatus='open')";
-
-                    // Посылаем POST запрос с данными пользователя(для авторизации запроса) и критериями отбора заявок
-                    urlConnection.setDoOutput(true);
-                    DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
-                    wr.writeBytes(urlParameters);
-                    wr.flush();
-                    wr.close();
-
-                    Log.d(LOG_TAG,"\nSending 'POST' request to URL : " + url);
-                    Log.d(LOG_TAG,"Post parameters : " + urlParameters);
-
-                    //Получаем заявки пользователя и форматируем их
-                    InputStream inputStream = urlConnection.getInputStream();
-
-                    reader = new BufferedReader(new InputStreamReader(inputStream));
-                    String line;
-                    int i = 0;//счетчик для строк(нужен для избавления от пустых и служебных строк)
-                    Constant constant = new Constant();
-                    while ((line = reader.readLine()) != null) {
-                        HashMap temp = new HashMap();
-                        Log.d(LOG_TAG, "вывод line " + line);
-                        String[] array = line.split(":", 2);//Разделяем полученную строку на номер заявки и тему
-                        if (i > 1) {//не закончится на 2 пустой строчке
-                            if (array.length < 2) break;//но закончится на первой пустой после перечисления заявок
-                        }
-                        Log.d(LOG_TAG, "длина массива " + array.length);//отсеиваем все строки с заявками(они разделены ":")
-                        if (array.length > 1) {
-                            temp.put(ID_COLUMN, array[0]);
-                            temp.put(SUBJECT_COLUMN, array[1]);
-                            Log.d(LOG_TAG, "вывод temp " + temp);
-                            nobodyTicketsArrayList.add(temp);//заносим информацию в массив
-                            i++;
-                            //Первая строка со служебной информацией исключается из массива т.к. там нет ":"
-                            //и из нее получается массив размером 1
-
-                            setAddTicketNumber(array[0]);//добавляем номер заявки в массив с номерами заявок
-                            Log.d(LOG_TAG, "содержимое adapterArrayList" + getTicketNumberArrayList());
-                        }
-                    }
-
-
-                    reader.close();
-
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-                return nobodyTicketsArrayList;*/
-
-
-
-
-
-
-
-
             try {
-                //URL imgUrl = new URL("http://84.52.96.184:8088/");
                 String url ="http://84.52.96.184:8088";
                 String username ="pilki";
                 String password ="pilkifoto";
@@ -416,53 +350,50 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
                 String login = username + ":" + password;
                 String base64login = new String(Base64.encode(login.getBytes(), Base64.DEFAULT));
 
-                Document document = Jsoup
-                        .connect(url)
-                        .header("Authorization", "Basic " + base64login)
-                        .referrer("http://84.52.96.184:8088/")
-                        .get();
-                //
+                Connection connection = Jsoup
+                                        .connect(url)
+                                        .header("Authorization", "Basic " + base64login)
+                                        .referrer("http://84.52.96.184:8088/");
+                Connection.Response response = connection.execute();
+                Document doc = null;
+                if(response.statusCode() == 200) {
+                    doc = connection.get();
+                    Element tableForParse = doc.getElementById("files");
+                    Elements rowsTable = tableForParse.select("tr");
 
-                Element tableForParse = document.getElementById("files");
-                Elements rowsTable = tableForParse.select("tr");
+                    String _title = "", _size = "", _timeStamp = "", _hints = "";
 
-                String _title = "", _size = "", _timeStamp = "", _hints = "";
-
-                for (int i = 0; i < rowsTable.size(); i++) {
-                    Element row = rowsTable.get(i);
-                    Elements cols = row.select("td");
-                    for (int j = 0; j < cols.size(); j++) {
-                        //listBrouser.add(e.text().toString());
-                        switch (j) {
-                            case 0:
-                                //todo:сделать парсинг ссылки
-                                _title = (cols.get(j)).text();
-                                break;
-                            case 1:
-                                _size = (cols.get(j)).text();
-                                break;
-                            case 2:
-                                _timeStamp = (cols.get(j)).text();
-                                break;
-                            case 3:
-                                _hints = (cols.get(j)).text();
-                                break;
+                    for (int i = 0; i < rowsTable.size(); i++) {
+                        Element row = rowsTable.get(i);
+                        Elements cols = row.select("td");
+                        for (int j = 0; j < cols.size(); j++) {
+                            //listBrouser.add(e.text().toString());
+                            switch (j) {
+                                case 0:
+                                    //todo:сделать парсинг ссылки
+                                    _title = (cols.get(j)).text();
+                                    break;
+                                case 1:
+                                    _size = (cols.get(j)).text();
+                                    break;
+                                case 2:
+                                    _timeStamp = (cols.get(j)).text();
+                                    break;
+                                case 3:
+                                    _hints = (cols.get(j)).text();
+                                    break;
+                            }
                         }
                     }
+                    RowBrouser getRSS = new RowBrouser(false,_title, _size, _timeStamp, _hints);
+                    listBrowser.add(getRSS);//добавляем элемени в список
                 }
-                RowBrouser getRSS = new RowBrouser(false,_title, _size, _timeStamp, _hints);
-                listBrouser.add(getRSS);//добавляем элемени в список
+                else {
+                    System.out.println("received error code : " + response.statusCode());
+                    RowBrouser getRSS = new RowBrouser(false,"Error", " " + response.statusCode(), null, null);
+                    listBrowser.add(getRSS);//добавляем элемени в список
 
-                /*HttpURLConnection urlConnection = (HttpURLConnection) imgUrl.openConnection();
-                urlConnection.setUseCaches(false);
-                urlConnection.setRequestProperty("Authorization", "basic " +
-                        Base64.encode("user:pass".getBytes(),Base64.NO_WRAP ));
-                urlConnection.setConnectTimeout(30000);
-                urlConnection.setReadTimeout(30000);
-                urlConnection.setInstanceFollowRedirects(true);
-                InputStream is = urlConnection.getInputStream();
-                if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {//проверка доступности
-                    InputStream inputStream = urlConnection.getInputStream();*/
+                }
                 } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -472,13 +403,13 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
 
 
 
-            for (String credential : DUMMY_CREDENTIALS) {
+            /*for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(mEmail)) {
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(mPassword);
                 }
-            }
+            }*/
 
             // TODO: register the new account here.
             return true;
