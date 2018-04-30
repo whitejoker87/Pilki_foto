@@ -94,6 +94,15 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
 
     static ArrayList<RowBrouser> listBrowser;
 
+    private static String URL = "http://84.52.96.184:8088/";
+
+    public static String getURL() {
+        return URL;
+    }
+
+    public static void setURL(String URL) {
+        Login.URL = URL;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -330,7 +339,7 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, String> {
 
         private final String mEmail;
         private final String mPassword;
@@ -341,75 +350,18 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-            String base64login= null;
-            int responseStatusCode = 0;
-            try {
-                String url ="http://84.52.96.184:8088";
-                String username ="pilki";
-                String password ="pilkifoto";
+        protected String doInBackground(Void... params) {
+            //String base64login= null;
 
-                String login = username + ":" + password;
-                base64login = new String(Base64.encode(login.getBytes(), Base64.DEFAULT));
+            String username = "pilki";
+            String password = "pilkifoto";
+            String login = username + ":" + password;
+            String base64login = new String(Base64.encode(login.getBytes(), Base64.DEFAULT));
 
-                Connection connection = Jsoup
-                                        .connect(url)
-                                        .userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36")
-                                        .ignoreHttpErrors(true)
-                                        .timeout(0)
-                                        .header("Authorization", "Basic " + base64login)
-                                        .referrer("http://84.52.96.184:8088/");
-                Connection.Response response = connection.execute();
-                Document doc = null;
-                responseStatusCode = response.statusCode();
-                if(response.statusCode() == 200) {
-                    doc = connection.get();
-                    Element tableForParse = doc.getElementById("files");
-                    Elements rowsTable = tableForParse.select("tr");
-
-                    String _title = "", _size = "", _timeStamp = "", _hints = "";
-
-                    for (int i = 0; i < rowsTable.size(); i++) {
-                        Element row = rowsTable.get(i);
-                        Elements cols = row.select("td");
-                        for (int j = 0; j < cols.size(); j++) {
-                            //listBrouser.add(e.text().toString());
-                            switch (j) {
-                                case 0:
-                                    //todo:сделать парсинг ссылки
-                                    _title = (cols.get(j)).text();
-                                    break;
-                                case 1:
-                                    _size = (cols.get(j)).text();
-                                    break;
-                                case 2:
-                                    _timeStamp = (cols.get(j)).text();
-                                    break;
-                                case 3:
-                                    _hints = (cols.get(j)).text();
-                                    break;
-                            }
-                        }
-                    }
-                    RowBrouser getRSS = new RowBrouser(false,_title, _size, _timeStamp, _hints);
-                    listBrowser.add(getRSS);//добавляем элемени в список
-                }
-                else {
-                    RowBrouser getRSS = new RowBrouser(false,"Error", " " + response.statusCode(), base64login, null);
-                    listBrowser.add(getRSS);//добавляем элемени в список
-
-                }
-                } catch (Exception e) {
-                e.printStackTrace();
-                RowBrouser getRSS = new RowBrouser(false,"Error", " " + e, responseStatusCode + "", base64login);
-                listBrowser.add(getRSS);//добавляем элемени в список
-
+            HtmlParser htmlParser = new HtmlParser(base64login, URL);
+            if (htmlParser.getParseHtml()){
+                return base64login;
             }
-
-
-
-
-
 
             /*for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
@@ -419,17 +371,20 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
                 }
             }*/
 
-            // TODO: register the new account here.
-            return true;
+            return null;
+
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final String base64login) {
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                startActivity(new Intent(Login.this, Main.class));
+            if (base64login != null) {
+                Intent intent = new Intent(Login.this, Main.class);
+                intent.putExtra("base64login", base64login);
+                startActivity(intent);//открываем новую активность
+                //startActivity(new Intent(Login.this, Main.class));
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
