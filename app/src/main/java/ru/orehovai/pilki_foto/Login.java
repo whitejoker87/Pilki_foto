@@ -94,7 +94,7 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
 
     static ArrayList<RowBrouser> listBrowser;
 
-    private static String URL = "http://84.52.96.184:8088/";
+    private static String URL = "http://84.52.96.184:8088";
 
     public static String getURL() {
         return URL;

@@ -40,15 +40,33 @@ public class Main extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 String addUrl = listBrowser.get(position).getLink();
-                Login.setURL(Login.getURL() + addUrl + "/");
+                Login.setURL(Login.getURL() + addUrl);
                 Log.d(LOG_TAG,  "full url     " + Login.getURL());
                 if (Login.getURL().contains(".jpg")) {
-                    //todo перейти на новое активити и открыть картинку.нужно так же сделать это активити
+                    Intent intent = new Intent(Main.this, Image.class);
+                    intent.putExtra("base64login", base64login);
+                    startActivity(intent);//открываем новую активность
+                    finish();
+                }else {
+                    new BrowserNavigateTask().execute();
+                    rowBrowserAdapter.notifyDataSetChanged();
                 }
-                new BrowserNavigateTask().execute();
-                rowBrowserAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Login.setURL(Login.getURL().substring(0, Login.getURL().lastIndexOf('/')));
+        new BrowserNavigateTask().execute();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        rowBrowserAdapter.notifyDataSetChanged();
     }
 
     public class BrowserNavigateTask extends AsyncTask<Void, Void, String> {

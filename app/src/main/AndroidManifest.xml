@@ -15,20 +15,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Main">
-
-        </activity>
+        <activity android:name=".Main"></activity>
         <activity
             android:name=".Login"
             android:label="@string/title_activity_login">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-
-            </activity>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Image"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_image"
+            android:theme="@style/FullscreenTheme"></activity>
     </application>
 
 </manifest>

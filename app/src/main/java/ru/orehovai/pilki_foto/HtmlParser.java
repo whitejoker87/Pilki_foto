@@ -33,8 +33,8 @@ public class HtmlParser {
                     //.userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36")
                     //.ignoreHttpErrors(true)
                     //.timeout(0)
-                    .header("Authorization", "Basic " + base64login)
-                    .referrer("http://84.52.96.184:8088/");
+                    .header("Authorization", "Basic " + base64login);
+                    //.referrer("http://84.52.96.184:8088/");
             Connection.Response response = connection.execute();
             Document doc = null;
             responseStatusCode = response.statusCode();
@@ -47,13 +47,16 @@ public class HtmlParser {
 
                 for (int i = 0; i < rowsTable.size(); i++) {
                     Element row = rowsTable.get(i);
-                    Element link = row.getElementsByTag("a").get(0);
-                    _link = link.text();
+                    //Element link = row.getElementsByTag("a").get(0);
+                    //_link = link.text();
                     Elements cols = row.select("td");
+                    Log.d(LOG_TAG, "рвзмер колс" + cols.size());
                     for (int j = 0; j < cols.size(); j++) {
                         switch (j) {
                             case 0:
                                 _title = (cols.get(j)).text();
+                                _link = "/" + cols.get(j).getElementsByTag("a").get(0).text();
+
                                 break;
                             case 1:
                                 _size = (cols.get(j)).text();
@@ -68,7 +71,7 @@ public class HtmlParser {
                     }
                     Log.d(LOG_TAG, _title + "   " + _size + "   " + _timeStamp + "   " + _hints + "  " + _link);
                     RowBrouser rowBrouser = new RowBrouser(/*false,*/ _title, _size, _timeStamp, _hints, _link);
-                    Login.getListBrowser().add(rowBrouser);//добавляем элемени в список
+                    if (!(_title.equals(""))) Login.getListBrowser().add(rowBrouser);//добавляем элемени в список
                 }
             }   else {
                 RowBrouser getRSS = new RowBrouser(/*false,*/ "Error", " " + response.statusCode(), base64login, null, null);
