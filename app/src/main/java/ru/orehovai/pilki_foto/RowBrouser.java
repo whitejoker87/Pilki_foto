@@ -1,15 +1,20 @@
 package ru.orehovai.pilki_foto;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 /*
 класс для структуры поля списка новостей
  */
-
+@Entity
 public class RowBrouser{
 
     private static final String TAG = "MyLog";
 
     //private boolean checked;
+    @PrimaryKey
     private String title;
+
     private String size;
     private String timeStamp;
     private String hits;

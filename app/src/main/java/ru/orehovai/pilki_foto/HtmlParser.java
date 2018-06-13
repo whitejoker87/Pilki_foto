@@ -50,13 +50,12 @@ public class HtmlParser {
                     //Element link = row.getElementsByTag("a").get(0);
                     //_link = link.text();
                     Elements cols = row.select("td");
-                    Log.d(LOG_TAG, "рвзмер колс" + cols.size());
+                    Log.d(LOG_TAG, "размер колс" + cols.size());
                     for (int j = 0; j < cols.size(); j++) {
                         switch (j) {
                             case 0:
                                 _title = (cols.get(j)).text();
                                 _link = "/" + cols.get(j).getElementsByTag("a").get(0).text();
-
                                 break;
                             case 1:
                                 _size = (cols.get(j)).text();
