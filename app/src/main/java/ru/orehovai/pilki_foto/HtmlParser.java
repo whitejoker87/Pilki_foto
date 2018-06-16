@@ -8,14 +8,16 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
-
 public class HtmlParser {
+
 
     public static String LOG_TAG = "my_log";
 
     private String base64login;
     private String url;
+    RowBrowser rowBrowser;
+    RowBrowserDatabase rowBrowserDatabase;
+    RowBrowserDao rowBrowserDao;
 
     HtmlParser(String base64login, String url)  {
         this.base64login = base64login;
@@ -23,7 +25,10 @@ public class HtmlParser {
     }
     public boolean getParseHtml() {
 
-        Login.getListBrowser().clear();
+        //Login.getListBrowser().clear();
+
+        rowBrowserDatabase = App.getInstance().getRowBrowserDatabase();
+        rowBrowserDao = rowBrowserDatabase.getRowBrowserDao();
 
         int responseStatusCode = 0;
         try {
@@ -69,20 +74,21 @@ public class HtmlParser {
                         }
                     }
                     Log.d(LOG_TAG, _title + "   " + _size + "   " + _timeStamp + "   " + _hints + "  " + _link);
-                    RowBrouser rowBrouser = new RowBrouser(/*false,*/ _title, _size, _timeStamp, _hints, _link);
-                    if (!(_title.equals(""))) Login.getListBrowser().add(rowBrouser);//добавляем элемени в список
+                    rowBrowser = new RowBrowser(/*false,*/ _title, _size, _timeStamp, _hints, _link);
+                    //if (!(_title.equals(""))) Login.getListBrowser().add(rowBrowser);//добавляем элемени в список
+                    if (!(_title.equals(""))) rowBrowserDao.insert(rowBrowser);//добавляем элемени в список
                 }
             }   else {
-                RowBrouser getRSS = new RowBrouser(/*false,*/ "Error", " " + response.statusCode(), base64login, null, null);
-                Login.getListBrowser().add(getRSS);//добавляем элемени в список
+                RowBrowser getRSS = new RowBrowser(/*false,*/ "Error", " " + response.statusCode(), base64login, null, null);
+                //Login.getListBrowser().add(getRSS);//добавляем элемени в список
 
             }return true;
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(LOG_TAG,  "отловили ошибку " + e);
 
-            RowBrouser getRSS = new RowBrouser(/*false, */"Error", " " + e, responseStatusCode + "", base64login, null);
-            Login.getListBrowser().add(getRSS);//добавляем элемени в список
+            RowBrowser getRSS = new RowBrowser(/*false, */"Error", " " + e, responseStatusCode + "", base64login, null);
+            //Login.getListBrowser().add(getRSS);//добавляем элемени в список
             return true;
 
         }

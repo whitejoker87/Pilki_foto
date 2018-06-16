@@ -4,14 +4,11 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class Main extends AppCompatActivity {
@@ -19,7 +16,7 @@ public class Main extends AppCompatActivity {
     RowBrowserAdapter rowBrowserAdapter;
     ListView lvBrowser;
     String base64login;
-    ArrayList<RowBrouser> listBrowser;
+    ArrayList<RowBrowser> listBrowser;
 
     public static String LOG_TAG = "my_log";
 

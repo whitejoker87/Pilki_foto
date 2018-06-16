@@ -3,12 +3,10 @@ package ru.orehovai.pilki_foto;
 
 import java.util.ArrayList;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -18,9 +16,9 @@ public class RowBrowserAdapter extends BaseAdapter {
 
     Context ctx;
     LayoutInflater lInflater;
-    ArrayList<RowBrouser> objects;
+    ArrayList<RowBrowser> objects;
 
-    RowBrowserAdapter(Context context, ArrayList<RowBrouser> listBrowser) {
+    RowBrowserAdapter(Context context, ArrayList<RowBrowser> listBrowser) {
         ctx = context;
         objects = listBrowser;
         lInflater = (LayoutInflater) ctx
@@ -55,22 +53,22 @@ public class RowBrowserAdapter extends BaseAdapter {
             view = lInflater.inflate(R.layout.row, parent, false);
         }
 
-        RowBrouser p = getGetRowBrowser(position);//получаем элемент списка по позициии
+        RowBrowser rowFromPosition = getRowBrowser(position);//получаем элемент списка по позициии
 
         // заполняем View в пункте списка данными из новостей или закладок: закголовок,цвет
         // и картинка
-        ((TextView) view.findViewById(R.id.tvTitleRowBrowser)).setText(p.getTitle());
-        ((TextView) view.findViewById(R.id.tvSizeRowBrowser)).setText(p.getSize());
-        ((TextView) view.findViewById(R.id.tvTimeStampRowBrowser)).setText(p.getTimeStamp());
-        ((TextView) view.findViewById(R.id.tvHitsRowBrowser)).setText(p.getHits());
+        ((TextView) view.findViewById(R.id.tvTitleRowBrowser)).setText(rowFromPosition.getTitle());
+        ((TextView) view.findViewById(R.id.tvSizeRowBrowser)).setText(rowFromPosition.getSize());
+        ((TextView) view.findViewById(R.id.tvTimeStampRowBrowser)).setText(rowFromPosition.getTimeStamp());
+        ((TextView) view.findViewById(R.id.tvHitsRowBrowser)).setText(rowFromPosition.getHits());
 
 
         return view;
     }
 
     // новость по позиции
-    RowBrouser getGetRowBrowser(int position) {
-        return ((RowBrouser) getItem(position));
+    RowBrowser getRowBrowser(int position) {
+        return ((RowBrowser) getItem(position));
     }
 
 
