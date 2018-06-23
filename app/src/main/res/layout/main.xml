@@ -7,7 +7,7 @@
     tools:context=".Main">
 
     <ListView
-        android:id="@+id/lvBrowser"
+        android:id="@+id/listViewBrowser"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

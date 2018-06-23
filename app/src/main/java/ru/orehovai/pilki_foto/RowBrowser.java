@@ -9,9 +9,9 @@ import android.support.annotation.NonNull;
  */
 @Entity
 public class RowBrowser {
-
-    //private boolean checked;
-    @PrimaryKey @NonNull
+    @PrimaryKey
+    private int id;
+    @NonNull
     private String title;
 
     private String size;
@@ -21,8 +21,8 @@ public class RowBrowser {
 
 
 
-    public RowBrowser(/*boolean checked,*/ String title, String size, String timeStamp, String hits, String link) {
-        //this.checked = checked;
+    public RowBrowser(int id, String title, String size, String timeStamp, String hits, String link) {
+        this.id = id;
         this.title = title;
         this.size = size;
         this.timeStamp = timeStamp;
@@ -35,6 +35,11 @@ public class RowBrowser {
         return checked;
     }*/
 
+
+    public int getId() {
+        return id;
+    }
+    @NonNull
     public String getTitle() {
         return title;
     }
@@ -56,6 +61,11 @@ public class RowBrowser {
 
     public String getLink() {
         return link;
+    }
+
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setTitle(String title) {

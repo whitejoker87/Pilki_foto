@@ -10,11 +10,11 @@ import java.util.ArrayList;
 @Dao
 public interface RowBrowserDao {
 
-   // @Query("Select * from RowBrowser")
-    //ArrayList<RowBrowser> getListBrowser();
+    @Query("Select * from RowBrowser")
+    ArrayList<RowBrowser> getListBrowser();
 
-    @Query("Select * from RowBrowser where title = :title")
-    RowBrowser getRowBrowser(String title);
+    @Query("Select * from RowBrowser where id = :id")
+    RowBrowser getRow(int id);
 
     @Insert
     void insert(RowBrowser rowBrowser);

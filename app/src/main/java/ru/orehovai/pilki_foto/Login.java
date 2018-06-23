@@ -43,15 +43,7 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
 
     static ArrayList<RowBrowser> listBrowser;*/
 
-    private static String URL = "http://84.52.96.184:8088";
 
-    public static String getURL() {
-        return URL;
-    }
-
-    public static void setURL(String URL) {
-        Login.URL = URL;
-    }
 
 
 
@@ -174,12 +166,10 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
         @Override
         protected String doInBackground(Void... params) {
 
-            String username = "pilki";
-            String password = "pilkifoto";
-            String login = username + ":" + password;
+            String login = App.USERNAME + ":" + App.PASSWORD;
             String base64login = new String(Base64.encode(login.getBytes(), Base64.DEFAULT));
 
-            HtmlParser htmlParser = new HtmlParser(base64login, URL);
+            HtmlParser htmlParser = new HtmlParser(base64login, App.URL);
             if (htmlParser.getParseHtml()){
                 return base64login;
             }

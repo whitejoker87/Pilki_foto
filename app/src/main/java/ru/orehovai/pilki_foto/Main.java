@@ -14,9 +14,11 @@ import java.util.ArrayList;
 public class Main extends AppCompatActivity {
 
     RowBrowserAdapter rowBrowserAdapter;
-    ListView lvBrowser;
+    ListView listViewBrowser;
     String base64login;
-    ArrayList<RowBrowser> listBrowser;
+    //ArrayList<RowBrowser> listBrowser;
+    //RowBrowserDatabase rowBrowserDatabase;
+    RowBrowserDao rowBrowserDao;
 
     public static String LOG_TAG = "my_log";
 
@@ -26,17 +28,20 @@ public class Main extends AppCompatActivity {
         setContentView(R.layout.main);
 
         base64login = getIntent().getStringExtra("base64login");
-        listBrowser = Login.getListBrowser();
+        //listBrowser = Login.getListBrowser();
+        //rowBrowserDatabase = App.getInstance().getRowBrowserDatabase();
+        rowBrowserDao = App.getInstance().getRowBrowserDatabase().getRowBrowserDao();
 
-        rowBrowserAdapter = new RowBrowserAdapter(this, Login.getListBrowser());
-        lvBrowser = findViewById(R.id.lvBrowser);
-        lvBrowser.setAdapter(rowBrowserAdapter);
+        rowBrowserAdapter = new RowBrowserAdapter(this, rowBrowserDao.getListBrowser());
+        listViewBrowser = findViewById(R.id.listViewBrowser);
+        listViewBrowser.setAdapter(rowBrowserAdapter);
 
-        lvBrowser.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listViewBrowser.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String addUrl = listBrowser.get(position).getLink();
+                //String addUrl = listBrowser.get(position).getLink();
+                String addUrl = rowBrowserDao.getRow(position).getLink();
                 Login.setURL(Login.getURL() + addUrl);
                 Log.d(LOG_TAG,  "full url     " + Login.getURL());
                 if (Login.getURL().contains(".jpg")) {
@@ -89,8 +94,6 @@ public class Main extends AppCompatActivity {
                 startActivity(intent);//открываем новую активность
                 //startActivity(new Intent(Login.this, Main.class));
                 //finish();
-            } else {
-
             }
         }
     }

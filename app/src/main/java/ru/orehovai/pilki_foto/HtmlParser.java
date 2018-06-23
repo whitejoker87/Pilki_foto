@@ -49,6 +49,7 @@ public class HtmlParser {
                 Elements rowsTable = tableForParse.select("tr");
                 Log.d(LOG_TAG, rowsTable.size() + "= rowstable. size");
                 String _title = "", _size = "", _timeStamp = "", _hints = "", _link = "";
+                int _id;
 
                 for (int i = 0; i < rowsTable.size(); i++) {
                     Element row = rowsTable.get(i);
@@ -73,21 +74,23 @@ public class HtmlParser {
                                 break;
                         }
                     }
-                    Log.d(LOG_TAG, _title + "   " + _size + "   " + _timeStamp + "   " + _hints + "  " + _link);
-                    rowBrowser = new RowBrowser(/*false,*/ _title, _size, _timeStamp, _hints, _link);
+                    _id = i;
+                    Log.d(LOG_TAG, _id + "   " + _title + "   " + _size + "   " + _timeStamp + "   " + _hints + "  " + _link);
+                    rowBrowser = new RowBrowser(_id, _title, _size, _timeStamp, _hints, _link);
                     //if (!(_title.equals(""))) Login.getListBrowser().add(rowBrowser);//добавляем элемени в список
                     if (!(_title.equals(""))) rowBrowserDao.insert(rowBrowser);//добавляем элемени в список
                 }
-            }   else {
-                RowBrowser getRSS = new RowBrowser(/*false,*/ "Error", " " + response.statusCode(), base64login, null, null);
+            }   //else {
+                //RowBrowser getRSS = new RowBrowser(/*false,*/ "Error", " " + response.statusCode(), base64login, null, null);
                 //Login.getListBrowser().add(getRSS);//добавляем элемени в список
 
-            }return true;
+            //}
+        return true;
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(LOG_TAG,  "отловили ошибку " + e);
 
-            RowBrowser getRSS = new RowBrowser(/*false, */"Error", " " + e, responseStatusCode + "", base64login, null);
+            //RowBrowser getRSS = new RowBrowser(/*false, */"Error", " " + e, responseStatusCode + "", base64login, null);
             //Login.getListBrowser().add(getRSS);//добавляем элемени в список
             return true;
 
