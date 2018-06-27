@@ -20,6 +20,8 @@ public class Main extends AppCompatActivity {
     //RowBrowserDatabase rowBrowserDatabase;
     RowBrowserDao rowBrowserDao;
 
+    private String navigateUrl;
+
     public static String LOG_TAG = "my_log";
 
     @Override
@@ -41,16 +43,24 @@ public class Main extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 //String addUrl = listBrowser.get(position).getLink();
-                String addUrl = rowBrowserDao.getRow(position).getLink();
-                Login.setURL(Login.getURL() + addUrl);
-                Log.d(LOG_TAG,  "full url     " + Login.getURL());
-                if (Login.getURL().contains(".jpg")) {
+                String rowLink = rowBrowserDao.getRow(position).getLink();
+                //Login.setURL(Login.getURL() + addUrl);
+                navigateUrl = App.URL + rowLink;
+                Log.d(LOG_TAG,  "full url     " + navigateUrl);
+                if (navigateUrl.contains(".jpg")) {
                     Intent intent = new Intent(Main.this, Image.class);
                     intent.putExtra("base64login", base64login);
+                    intent.putExtra("navigateUrl", navigateUrl);
                     startActivity(intent);//открываем новую активность
                     finish();
                 }else {
                     new BrowserNavigateTask().execute();
+                    if (base64login != null) {
+                        Intent intent = new Intent(Main.this, Main.class);
+                        intent.putExtra("base64login", base64login);
+                        intent.putExtra("navigateUrl", navigateUrl);
+                        startActivity(intent);//открываем новую активность
+                    }
                     rowBrowserAdapter.notifyDataSetChanged();
                 }
             }
@@ -60,7 +70,8 @@ public class Main extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Login.setURL(Login.getURL().substring(0, Login.getURL().lastIndexOf('/')));
+//        Login.setURL(Login.getURL().substring(0, Login.getURL().lastIndexOf('/')));
+        navigateUrl = navigateUrl.substring(0, navigateUrl.lastIndexOf('/'));
         new BrowserNavigateTask().execute();
 
     }
@@ -76,7 +87,7 @@ public class Main extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
 
-            HtmlParser htmlParser = new HtmlParser(base64login, Login.getURL());
+            HtmlParser htmlParser = new HtmlParser(base64login, navigateUrl);
             if (htmlParser.getParseHtml()){
                 return base64login;
             }
@@ -91,6 +102,7 @@ public class Main extends AppCompatActivity {
             if (base64login != null) {
                 Intent intent = new Intent(Main.this, Main.class);
                 intent.putExtra("base64login", base64login);
+                intent.putExtra("navigateUrl", navigateUrl);
                 startActivity(intent);//открываем новую активность
                 //startActivity(new Intent(Login.this, Main.class));
                 //finish();

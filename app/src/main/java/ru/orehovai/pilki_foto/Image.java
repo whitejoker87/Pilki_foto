@@ -96,6 +96,7 @@ public class Image extends AppCompatActivity {
 
     WebView wvImage;
     String base64login;
+    private String navigateUrl;
 
 
     @Override
@@ -104,6 +105,7 @@ public class Image extends AppCompatActivity {
 
         setContentView(R.layout.image);
         base64login = getIntent().getStringExtra("base64login");
+        navigateUrl = getIntent().getStringExtra("navigateUrl");
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         wvImage = findViewById(R.id.wvImage);
@@ -115,7 +117,7 @@ public class Image extends AppCompatActivity {
 
         Map extraHeaders = new HashMap<String, String>();
         extraHeaders.put("Authorization", "Basic " + base64login);
-        wvImage.loadUrl(Login.getURL(), extraHeaders);
+        wvImage.loadUrl(navigateUrl, extraHeaders);
 
 
 
@@ -191,7 +193,7 @@ public class Image extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Login.setURL(Login.getURL().substring(0, Login.getURL().lastIndexOf('/')));
+        navigateUrl = navigateUrl.substring(0, navigateUrl.lastIndexOf('/'));
         new ImageNavigateTask().execute();
 
     }
@@ -201,7 +203,7 @@ public class Image extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
 
-            HtmlParser htmlParser = new HtmlParser(base64login, Login.getURL());
+            HtmlParser htmlParser = new HtmlParser(base64login, navigateUrl);
             if (htmlParser.getParseHtml()){
                 return base64login;
             }
@@ -216,6 +218,7 @@ public class Image extends AppCompatActivity {
             if (base64login != null) {
                 Intent intent = new Intent(Image.this, Main.class);
                 intent.putExtra("base64login", base64login);
+                intent.putExtra("navigateUrl", navigateUrl);
                 startActivity(intent);//открываем новую активность
                 finish();
             } else {
