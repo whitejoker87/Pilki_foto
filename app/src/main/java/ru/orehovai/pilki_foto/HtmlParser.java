@@ -13,14 +13,14 @@ public class HtmlParser {
 
     public static String LOG_TAG = "my_log";
 
-    private String base64login;
+    //private String base64login;
     private String url;
     RowBrowser rowBrowser;
     RowBrowserDatabase rowBrowserDatabase;
     RowBrowserDao rowBrowserDao;
 
-    HtmlParser(String base64login, String url)  {
-        this.base64login = base64login;
+    HtmlParser(String url)  {
+        //this.base64login = base64login;
         this.url = url;
     }
     public boolean getParseHtml() {
@@ -30,7 +30,7 @@ public class HtmlParser {
         rowBrowserDatabase = App.getInstance().getRowBrowserDatabase();
         rowBrowserDao = rowBrowserDatabase.getRowBrowserDao();
 
-        int responseStatusCode = 0;
+        //int responseStatusCode = 0;
         try {
 
             Connection connection = Jsoup
@@ -38,11 +38,11 @@ public class HtmlParser {
                     //.userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36")
                     //.ignoreHttpErrors(true)
                     //.timeout(0)
-                    .header("Authorization", "Basic " + base64login);
+                    .header("Authorization", "Basic " + App.BASE64LOGIN);
                     //.referrer("http://84.52.96.184:8088/");
             Connection.Response response = connection.execute();
             Document doc = null;
-            responseStatusCode = response.statusCode();
+            //responseStatusCode = response.statusCode();
             if (response.statusCode() == 200) {
                 doc = connection.get();
                 Element tableForParse = doc.getElementById("files");
@@ -80,11 +80,11 @@ public class HtmlParser {
                     //if (!(_title.equals(""))) Login.getListBrowser().add(rowBrowser);//добавляем элемени в список
                     if (!(_title.equals(""))) rowBrowserDao.insert(rowBrowser);//добавляем элемени в список
                 }
-            }   //else {
+            }   else { return false;
                 //RowBrowser getRSS = new RowBrowser(/*false,*/ "Error", " " + response.statusCode(), base64login, null, null);
                 //Login.getListBrowser().add(getRSS);//добавляем элемени в список
 
-            //}
+            }
         return true;
         } catch (Exception e) {
             e.printStackTrace();

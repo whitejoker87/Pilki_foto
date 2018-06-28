@@ -3,6 +3,8 @@ package ru.orehovai.pilki_foto;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -21,9 +23,12 @@ public class DownloadIntentService extends IntentService {
     private static final String EXTRA_PARAM1 = "ru.orehovai.pilki_foto.extra.PARAM1";
     private static final String EXTRA_PARAM2 = "ru.orehovai.pilki_foto.extra.PARAM2";
 
+    HtmlParser htmlParser;
+
     public DownloadIntentService() {
         super("DownloadIntentService");
     }
+
 
     /**
      * Starts this service to perform action Foo with the given parameters. If
@@ -58,7 +63,13 @@ public class DownloadIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            final String action = intent.getAction();
+
+            htmlParser = new HtmlParser(intent.getStringExtra("url"));
+            if (htmlParser.getParseHtml()) {
+                Intent intent1 = new Intent("OpenUrlIntent");
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent1);
+            }
+            /*final String action = intent.getAction();
             if (ACTION_FOO.equals(action)) {
                 final String param1 = intent.getStringExtra(EXTRA_PARAM1);
                 final String param2 = intent.getStringExtra(EXTRA_PARAM2);
@@ -67,7 +78,7 @@ public class DownloadIntentService extends IntentService {
                 final String param1 = intent.getStringExtra(EXTRA_PARAM1);
                 final String param2 = intent.getStringExtra(EXTRA_PARAM2);
                 handleActionBaz(param1, param2);
-            }
+            }*/
         }
     }
 

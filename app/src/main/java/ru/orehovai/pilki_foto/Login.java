@@ -3,7 +3,11 @@ package ru.orehovai.pilki_foto;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.AsyncTask;
@@ -53,6 +57,7 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
+
         //listBrowser = new ArrayList<>();
 
 
@@ -81,7 +86,21 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-    }
+
+
+
+
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //String someValue = intent.getStringExtra("someName");
+                // ... do something ...
+                //тут должно быть открытие новой активити
+            }
+        };
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(receiver, new IntentFilter("openUrlIntent"));
+    }//end of onCreate()
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -112,8 +131,9 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            startService(new Intent().putExtra("url", App.URL));
+            //mAuthTask = new UserLoginTask(email, password);
+            //mAuthTask.execute((Void) null);
         }
     }
 
@@ -153,7 +173,7 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
         }
     }
 
-    public class UserLoginTask extends AsyncTask<Void, Void, String> {
+    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
@@ -164,26 +184,23 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
         }
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected Boolean doInBackground(Void... params) {
 
-            String login = App.USERNAME + ":" + App.PASSWORD;
-            String base64login = new String(Base64.encode(login.getBytes(), Base64.DEFAULT));
+            //String login = App.USERNAME + ":" + App.PASSWORD;
+            //String base64login = new String(Base64.encode(login.getBytes(), Base64.DEFAULT));
 
-            HtmlParser htmlParser = new HtmlParser(base64login, App.URL);
-            if (htmlParser.getParseHtml()){
-                return base64login;
-            }
-            return null;
+            HtmlParser htmlParser = new HtmlParser(App.URL);
+            return htmlParser.getParseHtml();
         }
 
         @Override
-        protected void onPostExecute(final String base64login) {
+        protected void onPostExecute(final Boolean base64login) {
             mAuthTask = null;
             showProgress(false);
 
-            if (base64login != null) {
+            if (base64login) {
                 Intent intent = new Intent(Login.this, Main.class);
-                intent.putExtra("base64login", base64login);
+                //intent.putExtra("base64login", base64login);
                 startActivity(intent);//открываем новую активность
                 finish();
             } else {
