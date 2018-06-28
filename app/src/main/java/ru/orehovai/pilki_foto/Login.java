@@ -32,7 +32,7 @@ import java.util.ArrayList;
 
 public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor>*/ {
 
-    private UserLoginTask mAuthTask = null;
+    //private UserLoginTask mAuthTask = null;
 
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -95,22 +95,23 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
             public void onReceive(Context context, Intent intent) {
                 //String someValue = intent.getStringExtra("someName");
                 // ... do something ...
-                //тут должно быть открытие новой активити
+
+                showProgress(false);
+                intent = new Intent(Login.this, Main.class);
+                //intent.putExtra("base64login", base64login);
+                startActivity(intent);//открываем новую активность
+                finish();
             }
         };
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(receiver, new IntentFilter("openUrlIntent"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("openUrlIntent"));
+
+
     }//end of onCreate()
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
+        //if (mAuthTask != null) {
+         //   return;
+        //}
 
         // Reset errors.
         mEmailView.setError(null);
@@ -173,7 +174,7 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
         }
     }
 
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    /*public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
@@ -214,6 +215,6 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
             mAuthTask = null;
             showProgress(false);
         }
-    }
+    }*/
 }
 
