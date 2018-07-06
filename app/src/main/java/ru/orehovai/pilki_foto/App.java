@@ -21,7 +21,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        rowBrowserDatabase = Room.databaseBuilder(this, RowBrowserDatabase.class, "rowBrowserDatabase").build();
+        rowBrowserDatabase = Room.databaseBuilder(this, RowBrowserDatabase.class, "rowBrowserDatabase").allowMainThreadQueries().build();//убрать запуск в основном потоке
     }
 
     public static App getInstance() {

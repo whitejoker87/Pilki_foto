@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -16,14 +17,16 @@ import android.support.v4.content.LocalBroadcastManager;
 public class DownloadIntentService extends IntentService {
     // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    private static final String ACTION_FOO = "ru.orehovai.pilki_foto.action.FOO";
-    private static final String ACTION_BAZ = "ru.orehovai.pilki_foto.action.BAZ";
+    //private static final String ACTION_FOO = "ru.orehovai.pilki_foto.action.FOO";
+    //private static final String ACTION_BAZ = "ru.orehovai.pilki_foto.action.BAZ";
 
     // TODO: Rename parameters
-    private static final String EXTRA_PARAM1 = "ru.orehovai.pilki_foto.extra.PARAM1";
-    private static final String EXTRA_PARAM2 = "ru.orehovai.pilki_foto.extra.PARAM2";
+   // private static final String EXTRA_PARAM1 = "ru.orehovai.pilki_foto.extra.PARAM1";
+   // private static final String EXTRA_PARAM2 = "ru.orehovai.pilki_foto.extra.PARAM2";
 
     HtmlParser htmlParser;
+
+    public static String LOG_TAG = "my_log";
 
     public DownloadIntentService() {
         super("DownloadIntentService");
@@ -37,13 +40,13 @@ public class DownloadIntentService extends IntentService {
      * @see IntentService
      */
     // TODO: Customize helper method
-    public static void startActionFoo(Context context, String param1, String param2) {
+    /*public static void startActionFoo(Context context, String param1, String param2) {
         Intent intent = new Intent(context, DownloadIntentService.class);
         intent.setAction(ACTION_FOO);
         intent.putExtra(EXTRA_PARAM1, param1);
         intent.putExtra(EXTRA_PARAM2, param2);
         context.startService(intent);
-    }
+    }*/
 
     /**
      * Starts this service to perform action Baz with the given parameters. If
@@ -52,22 +55,28 @@ public class DownloadIntentService extends IntentService {
      * @see IntentService
      */
     // TODO: Customize helper method
-    public static void startActionBaz(Context context, String param1, String param2) {
+   /* public static void startActionBaz(Context context, String param1, String param2) {
         Intent intent = new Intent(context, DownloadIntentService.class);
         intent.setAction(ACTION_BAZ);
         intent.putExtra(EXTRA_PARAM1, param1);
         intent.putExtra(EXTRA_PARAM2, param2);
         context.startService(intent);
-    }
+    }*/
 
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-
-            htmlParser = new HtmlParser(intent.getStringExtra("url"));
+            String url = intent.getStringExtra("url");
+            Log.d(LOG_TAG, "url in servise " + url);
+            htmlParser = new HtmlParser(url);
+            Intent intent1;
             if (htmlParser.getParseHtml()) {
-                Intent intent1 = new Intent("OpenUrlIntent");
+                if (url.equals(App.URL)) intent1 = new Intent("openLogin");
+                else intent1 = new Intent("openMain");
+
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent1);
+
+                stopSelf();
             }
             /*final String action = intent.getAction();
             if (ACTION_FOO.equals(action)) {
@@ -86,17 +95,17 @@ public class DownloadIntentService extends IntentService {
      * Handle action Foo in the provided background thread with the provided
      * parameters.
      */
-    private void handleActionFoo(String param1, String param2) {
+    /*private void handleActionFoo(String param1, String param2) {
         // TODO: Handle action Foo
         throw new UnsupportedOperationException("Not yet implemented");
-    }
+    }*/
 
     /**
      * Handle action Baz in the provided background thread with the provided
      * parameters.
      */
-    private void handleActionBaz(String param1, String param2) {
+    /*private void handleActionBaz(String param1, String param2) {
         // TODO: Handle action Baz
         throw new UnsupportedOperationException("Not yet implemented");
-    }
+    }*/
 }

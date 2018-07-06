@@ -10,11 +10,11 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
-import android.os.AsyncTask;
+//import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Base64;
+//import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -103,7 +103,7 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
                 finish();
             }
         };
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("openUrlIntent"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("openLogin"));
 
 
     }//end of onCreate()
@@ -118,8 +118,8 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        //String email = mEmailView.getText().toString();
+        //String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -132,7 +132,7 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            startService(new Intent().putExtra("url", App.URL));
+            startService(new Intent(this, DownloadIntentService.class).putExtra("url", App.URL));
             //mAuthTask = new UserLoginTask(email, password);
             //mAuthTask.execute((Void) null);
         }

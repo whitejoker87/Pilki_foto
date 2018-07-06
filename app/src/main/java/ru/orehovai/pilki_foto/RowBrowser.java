@@ -21,7 +21,7 @@ public class RowBrowser {
 
 
 
-    public RowBrowser(int id, String title, String size, String timeStamp, String hits, String link) {
+    public RowBrowser(int id, @NonNull String title, String size, String timeStamp, String hits, String link) {
         this.id = id;
         this.title = title;
         this.size = size;
@@ -68,7 +68,7 @@ public class RowBrowser {
         this.id = id;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(@NonNull String title) {
         this.title = title;
     }
 

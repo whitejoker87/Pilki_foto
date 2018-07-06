@@ -95,7 +95,7 @@ public class Image extends AppCompatActivity {
 
 
     WebView wvImage;
-    String base64login;
+    //String base64login;
     private String navigateUrl;
 
 
@@ -104,8 +104,8 @@ public class Image extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.image);
-        base64login = getIntent().getStringExtra("base64login");
-        navigateUrl = getIntent().getStringExtra("navigateUrl");
+        //base64login = getIntent().getStringExtra("base64login");
+        //navigateUrl = getIntent().getStringExtra("navigateUrl");
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         wvImage = findViewById(R.id.wvImage);
@@ -116,7 +116,7 @@ public class Image extends AppCompatActivity {
         //wvImage.setInitialScale(40);
 
         Map extraHeaders = new HashMap<String, String>();
-        extraHeaders.put("Authorization", "Basic " + base64login);
+        extraHeaders.put("Authorization", "Basic " + App.BASE64LOGIN);
         wvImage.loadUrl(navigateUrl, extraHeaders);
 
 
@@ -194,16 +194,17 @@ public class Image extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         navigateUrl = navigateUrl.substring(0, navigateUrl.lastIndexOf('/'));
-        new ImageNavigateTask().execute();
+        //new ImageNavigateTask().execute();
+        startService(new Intent().putExtra("url", navigateUrl));
 
     }
 
-    public class ImageNavigateTask extends AsyncTask<Void, Void, String> {
+    /*public class ImageNavigateTask extends AsyncTask<Void, Void, String> {
 
         @Override
         protected String doInBackground(Void... params) {
 
-            HtmlParser htmlParser = new HtmlParser(base64login, navigateUrl);
+            HtmlParser htmlParser = new HtmlParser(navigateUrl);
             if (htmlParser.getParseHtml()){
                 return base64login;
             }
@@ -225,5 +226,5 @@ public class Image extends AppCompatActivity {
 
             }
         }
-    }
+    }*/
 }

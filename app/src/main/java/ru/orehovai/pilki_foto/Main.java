@@ -33,12 +33,12 @@ public class Main extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        base64login = getIntent().getStringExtra("base64login");
+        //base64login = getIntent().getStringExtra("base64login");
         //listBrowser = Login.getListBrowser();
         //rowBrowserDatabase = App.getInstance().getRowBrowserDatabase();
         rowBrowserDao = App.getInstance().getRowBrowserDatabase().getRowBrowserDao();
 
-        rowBrowserAdapter = new RowBrowserAdapter(this, rowBrowserDao.getListBrowser());
+        rowBrowserAdapter = new RowBrowserAdapter(this, (ArrayList<RowBrowser>)rowBrowserDao.getListBrowser());
         listViewBrowser = findViewById(R.id.listViewBrowser);
         listViewBrowser.setAdapter(rowBrowserAdapter);
 
@@ -47,7 +47,8 @@ public class Main extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 //String addUrl = listBrowser.get(position).getLink();
-                String rowLink = rowBrowserDao.getRow(position).getLink();
+                Log.d(LOG_TAG, "position перед getLink" + position);
+                String rowLink = rowBrowserDao.getRow(position+1).getLink();//сделать нормально
                 //Login.setURL(Login.getURL() + addUrl);
                 navigateUrl = App.URL + rowLink;
                 Log.d(LOG_TAG,  "full url     " + navigateUrl);
@@ -58,13 +59,14 @@ public class Main extends AppCompatActivity {
                     startActivity(intent);//открываем новую активность
                     finish();
                 }else {
-                    new BrowserNavigateTask().execute();
-                    if (base64login != null) {
+                    //new BrowserNavigateTask().execute();
+                    startService(new Intent(Main.this,DownloadIntentService.class).putExtra("url", navigateUrl));
+                    /*if (base64login != null) {
                         Intent intent = new Intent(Main.this, Main.class);
                         intent.putExtra("base64login", base64login);
                         intent.putExtra("navigateUrl", navigateUrl);
                         startActivity(intent);//открываем новую активность
-                    }
+                    }*/
                     rowBrowserAdapter.notifyDataSetChanged();
                 }
             }
@@ -76,13 +78,15 @@ public class Main extends AppCompatActivity {
                 //String someValue = intent.getStringExtra("someName");
                 // ... do something ...
 
-                intent = new Intent(Login.this, Main.class);
+                //intent = new Intent(Main.this, Main.class);
                 //intent.putExtra("base64login", base64login);
-                startActivity(intent);//открываем новую активность
-                finish();
+                //startActivity(intent);//открываем новую активность
+                //finish();
+                Log.d(LOG_TAG,  "Получаю ответ из сервиса в мейн");
+                rowBrowserAdapter.notifyDataSetChanged();
             }
         };
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("openUrlIntent"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("openMain"));
 
 
     }
@@ -92,7 +96,8 @@ public class Main extends AppCompatActivity {
         super.onBackPressed();
 //        Login.setURL(Login.getURL().substring(0, Login.getURL().lastIndexOf('/')));
         navigateUrl = navigateUrl.substring(0, navigateUrl.lastIndexOf('/'));
-        new BrowserNavigateTask().execute();
+        //new BrowserNavigateTask().execute();
+        startService(new Intent().putExtra("url", navigateUrl));
 
     }
 
@@ -102,7 +107,7 @@ public class Main extends AppCompatActivity {
         rowBrowserAdapter.notifyDataSetChanged();
     }
 
-    public class BrowserNavigateTask extends AsyncTask<Void, Void, String> {
+    /*public class BrowserNavigateTask extends AsyncTask<Void, Void, String> {
 
         @Override
         protected String doInBackground(Void... params) {
@@ -128,5 +133,5 @@ public class Main extends AppCompatActivity {
                 //finish();
             }
         }
-    }
+    }*/
 }
