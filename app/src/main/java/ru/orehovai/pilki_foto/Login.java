@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Build;
 import android.os.Bundle;
 //import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -57,11 +58,6 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-
-        //listBrowser = new ArrayList<>();
-
-
-
         mEmailView = findViewById(R.id.email);
 
         mPasswordView = findViewById(R.id.password);
@@ -93,12 +89,10 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //String someValue = intent.getStringExtra("someName");
-                // ... do something ...
 
                 showProgress(false);
+                Log.d(LOG_TAG,  "Получаю ответ из сервиса в логин");
                 intent = new Intent(Login.this, Main.class);
-                //intent.putExtra("base64login", base64login);
                 startActivity(intent);//открываем новую активность
                 finish();
             }
@@ -132,7 +126,7 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            startService(new Intent(this, DownloadIntentService.class).putExtra("url", App.URL));
+            startService(new Intent(this, DownloadIntentService.class).putExtra("url", App.STARTURL));
             //mAuthTask = new UserLoginTask(email, password);
             //mAuthTask.execute((Void) null);
         }
@@ -173,6 +167,12 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
+
+    /*@Override
+    public void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        super.onDestroy();
+    }*/
 
     /*public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 

@@ -1,5 +1,6 @@
 package ru.orehovai.pilki_foto;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.jsoup.Connection;
@@ -19,16 +20,16 @@ public class HtmlParser {
     RowBrowserDatabase rowBrowserDatabase;
     RowBrowserDao rowBrowserDao;
 
-    HtmlParser(String url)  {
-        //this.base64login = base64login;
+    HtmlParser(Context context, String url)  {
         this.url = url;
-    }
-    public boolean getParseHtml() {
+    //}
+    //public boolean getParseHtml() {
 
         //Login.getListBrowser().clear();
-
-        rowBrowserDatabase = App.getInstance().getRowBrowserDatabase();
+        rowBrowserDatabase = RowBrowserDatabase.getRowBrowserDatabase(context);
         rowBrowserDao = rowBrowserDatabase.getRowBrowserDao();
+
+        rowBrowserDao.nukeTable();
 
         //int responseStatusCode = 0;
         try {
@@ -47,7 +48,7 @@ public class HtmlParser {
                 doc = connection.get();
                 Element tableForParse = doc.getElementById("files");
                 Elements rowsTable = tableForParse.select("tr");
-                Log.d(LOG_TAG, rowsTable.size() + "= rowstable. size");
+                Log.d(LOG_TAG, rowsTable.size() + " = rowstable.size");
                 String _title = "", _size = "", _timeStamp = "", _hints = "", _link = "";
                 int _id;
 
@@ -56,44 +57,50 @@ public class HtmlParser {
                     //Element link = row.getElementsByTag("a").get(0);
                     //_link = link.text();
                     Elements cols = row.select("td");
-                    Log.d(LOG_TAG, "размер колс" + cols.size());
-                    for (int j = 0; j < cols.size(); j++) {
-                        switch (j) {
-                            case 0:
-                                _title = (cols.get(j)).text();
-                                _link = "/" + cols.get(j).getElementsByTag("a").get(0).text();
-                                break;
-                            case 1:
-                                _size = (cols.get(j)).text();
-                                break;
-                            case 2:
-                                _timeStamp = (cols.get(j)).text();
-                                break;
-                            case 3:
-                                _hints = (cols.get(j)).text();
-                                break;
+                    Log.d(LOG_TAG, "размер cols " + cols.size());
+                    if (cols.size() > 0) {
+                        for (int j = 0; j < cols.size(); j++) {
+                            switch (j) {
+                                case 0:
+                                    _title = (cols.get(j)).text();
+                                    _link = url + "/" + cols.get(j).getElementsByTag("a").get(0).text();
+                                    break;
+                                case 1:
+                                    _size = (cols.get(j)).text();
+                                    break;
+                                case 2:
+                                    _timeStamp = (cols.get(j)).text();
+                                    break;
+                                case 3:
+                                    _hints = (cols.get(j)).text();
+                                    break;
+                            }
                         }
+                        _id = i;
+                        Log.d(LOG_TAG, _id + "   " + _title + "   " + _size + "   " + _timeStamp + "   " + _hints + "  " + _link);
+                        rowBrowser = new RowBrowser(_id, _title, _size, _timeStamp, _hints, _link);
                     }
-                    _id = i;
-                    Log.d(LOG_TAG, _id + "   " + _title + "   " + _size + "   " + _timeStamp + "   " + _hints + "  " + _link);
-                    rowBrowser = new RowBrowser(_id, _title, _size, _timeStamp, _hints, _link);
                     //if (!(_title.equals(""))) Login.getListBrowser().add(rowBrowser);//добавляем элемени в список
                     if (!(_title.equals(""))) rowBrowserDao.insert(rowBrowser);//добавляем элемени в список
                 }
-            }   else { return false;
+            } //  else { return false;
                 //RowBrowser getRSS = new RowBrowser(/*false,*/ "Error", " " + response.statusCode(), base64login, null, null);
                 //Login.getListBrowser().add(getRSS);//добавляем элемени в список
 
-            }
-        return true;
+            //}
+        //return true;
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(LOG_TAG,  "отловили ошибку " + e);
 
             //RowBrowser getRSS = new RowBrowser(/*false, */"Error", " " + e, responseStatusCode + "", base64login, null);
             //Login.getListBrowser().add(getRSS);//добавляем элемени в список
-            return true;
+            //return true;
 
         }
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

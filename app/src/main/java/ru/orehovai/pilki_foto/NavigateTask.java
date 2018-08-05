@@ -15,10 +15,10 @@ public class NavigateTask extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... params) {
 
-        HtmlParser htmlParser = new HtmlParser(navigateUrl);
-        if (htmlParser.getParseHtml()){
+        //HtmlParser htmlParser = new HtmlParser(navigateUrl);
+        /*if (htmlParser.getParseHtml()){
             return base64login;
-        }
+        }*/
 
         return null;
 // переделать вывод base64login

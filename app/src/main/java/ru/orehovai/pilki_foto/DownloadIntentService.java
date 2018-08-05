@@ -68,16 +68,19 @@ public class DownloadIntentService extends IntentService {
         if (intent != null) {
             String url = intent.getStringExtra("url");
             Log.d(LOG_TAG, "url in servise " + url);
-            htmlParser = new HtmlParser(url);
+            htmlParser = new HtmlParser(getBaseContext(), url);
             Intent intent1;
-            if (htmlParser.getParseHtml()) {
-                if (url.equals(App.URL)) intent1 = new Intent("openLogin");
-                else intent1 = new Intent("openMain");
+            //if (htmlParser.getParseHtml()) {
+                if (url.equals(App.STARTURL)) intent1 = new Intent("openLogin");
+                else {
+                    intent1 = new Intent("openMain");
+                    intent1.putExtra("url", url);
+                }
 
-                LocalBroadcastManager.getInstance(this).sendBroadcast(intent1);
+                LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent1);
 
-                stopSelf();
-            }
+                //stopSelf();
+            //}
             /*final String action = intent.getAction();
             if (ACTION_FOO.equals(action)) {
                 final String param1 = intent.getStringExtra(EXTRA_PARAM1);
