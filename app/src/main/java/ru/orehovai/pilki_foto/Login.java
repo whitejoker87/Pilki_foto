@@ -10,11 +10,8 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
-//import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
-//import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -25,37 +22,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-//import org.w3c.dom.Document;
-//import org.w3c.dom.Element;
-//import org.w3c.dom.NodeList;
-
-import java.util.ArrayList;
-
-public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor>*/ {
-
-    //private UserLoginTask mAuthTask = null;
+public class Login extends AppCompatActivity {
 
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
 
-    public static String LOG_TAG = "my_log";
+    //public static String LOG_TAG = "my_log";
 
     private BroadcastReceiver receiver;
-
-
-
-    /*public static ArrayList<RowBrowser> getListBrowser() {
-        return listBrowser;
-    }
-
-    static ArrayList<RowBrowser> listBrowser;*/
-
-
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +71,7 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
             public void onReceive(Context context, Intent intent) {
 
                 showProgress(false);
-                Log.d(LOG_TAG,  "Получаю ответ из сервиса в логин");
+                //Log.d(LOG_TAG,  "Получаю ответ из сервиса в логин");
                 intent = new Intent(Login.this, Main.class);
                 startActivity(intent);//открываем новую активность
                 finish();
@@ -177,48 +153,5 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onDestroy();
     }
-
-    /*public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            //String login = App.USERNAME + ":" + App.PASSWORD;
-            //String base64login = new String(Base64.encode(login.getBytes(), Base64.DEFAULT));
-
-            HtmlParser htmlParser = new HtmlParser(App.URL);
-            return htmlParser.getParseHtml();
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean base64login) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (base64login) {
-                Intent intent = new Intent(Login.this, Main.class);
-                //intent.putExtra("base64login", base64login);
-                startActivity(intent);//открываем новую активность
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }*/
 }
 

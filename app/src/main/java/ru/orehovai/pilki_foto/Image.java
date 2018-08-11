@@ -1,19 +1,14 @@
 package ru.orehovai.pilki_foto;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.Display;
+//import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.webkit.WebView;
 
 import java.util.HashMap;
@@ -30,7 +25,7 @@ public class Image extends AppCompatActivity {
      */
     private static final boolean AUTO_HIDE = true;
 
-    public static String LOG_TAG = "my_log";
+    //public static String LOG_TAG = "my_log";
 
     /**
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
@@ -98,7 +93,6 @@ public class Image extends AppCompatActivity {
 
 
     WebView wvImage;
-    //String base64login;
     private String navigateUrl;
 
 
@@ -107,7 +101,6 @@ public class Image extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.image);
-        //base64login = getIntent().getStringExtra("base64login");
         navigateUrl = getIntent().getStringExtra("navigateUrl");
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
@@ -120,13 +113,9 @@ public class Image extends AppCompatActivity {
 
         Map<String, String> extraHeaders = new HashMap<String, String>();
         extraHeaders.put("Authorization", "Basic " + App.BASE64LOGIN);
-        Log.d(LOG_TAG, "запрос к картинке     " + extraHeaders.toString());
-        Log.d(LOG_TAG,  "картинка урл " + navigateUrl);
+        //Log.d(LOG_TAG, "запрос к картинке     " + extraHeaders.toString());
+        //Log.d(LOG_TAG,  "картинка урл " + navigateUrl);
         wvImage.loadUrl(navigateUrl, extraHeaders);
-
-
-
-
 
         // Set up the user interaction to manually show or hide the system UI.
         wvImage.setOnClickListener(new View.OnClickListener() {
@@ -197,39 +186,9 @@ public class Image extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         navigateUrl = navigateUrl.substring(0, navigateUrl.lastIndexOf('/'));
-        Log.d(LOG_TAG,  "кнопка назад image урл " + navigateUrl);
+        //Log.d(LOG_TAG,  "кнопка назад image урл " + navigateUrl);
         startActivity(new Intent(Image.this, Main.class).putExtra("url", navigateUrl));
 
     }
-
-    /*public class ImageNavigateTask extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void... params) {
-
-            HtmlParser htmlParser = new HtmlParser(navigateUrl);
-            if (htmlParser.getParseHtml()){
-                return base64login;
-            }
-
-            return null;
-
-        }
-
-        @Override
-        protected void onPostExecute(final String base64login) {
-
-            if (base64login != null) {
-                Intent intent = new Intent(Image.this, Main.class);
-                intent.putExtra("base64login", base64login);
-                intent.putExtra("navigateUrl", navigateUrl);
-                startActivity(intent);//открываем новую активность
-                finish();
-            } else {
-
-            }
-        }
-    }*/
 }

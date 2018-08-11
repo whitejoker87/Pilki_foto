@@ -4,7 +4,6 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RowBrowserViewModel extends AndroidViewModel {

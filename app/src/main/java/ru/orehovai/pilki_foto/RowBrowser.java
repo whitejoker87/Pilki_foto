@@ -4,9 +4,6 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-/*
-класс для структуры поля списка новостей
- */
 @Entity
 public class RowBrowser {
     @PrimaryKey
