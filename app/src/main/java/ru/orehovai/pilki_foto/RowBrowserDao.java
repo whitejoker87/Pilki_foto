@@ -16,7 +16,7 @@ import java.util.List;
 public interface RowBrowserDao {
 
     @Query("Select * from RowBrowser")
-    @TypeConverters(Converters.class)
+    //@TypeConverters(Converters.class)
     LiveData<List<RowBrowser>> getListBrowser();
 
     @Query("Select * from RowBrowser where id = :id")

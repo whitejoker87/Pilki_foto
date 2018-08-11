@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +29,8 @@ public class Image extends AppCompatActivity {
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
      */
     private static final boolean AUTO_HIDE = true;
+
+    public static String LOG_TAG = "my_log";
 
     /**
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
@@ -105,7 +108,7 @@ public class Image extends AppCompatActivity {
 
         setContentView(R.layout.image);
         //base64login = getIntent().getStringExtra("base64login");
-        //navigateUrl = getIntent().getStringExtra("navigateUrl");
+        navigateUrl = getIntent().getStringExtra("navigateUrl");
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         wvImage = findViewById(R.id.wvImage);
@@ -115,8 +118,10 @@ public class Image extends AppCompatActivity {
         wvImage.getSettings().setUseWideViewPort(true);
         //wvImage.setInitialScale(40);
 
-        Map extraHeaders = new HashMap<String, String>();
+        Map<String, String> extraHeaders = new HashMap<String, String>();
         extraHeaders.put("Authorization", "Basic " + App.BASE64LOGIN);
+        Log.d(LOG_TAG, "запрос к картинке     " + extraHeaders.toString());
+        Log.d(LOG_TAG,  "картинка урл " + navigateUrl);
         wvImage.loadUrl(navigateUrl, extraHeaders);
 
 
@@ -192,10 +197,10 @@ public class Image extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        //super.onBackPressed();
         navigateUrl = navigateUrl.substring(0, navigateUrl.lastIndexOf('/'));
-        //new ImageNavigateTask().execute();
-        startService(new Intent().putExtra("url", navigateUrl));
+        Log.d(LOG_TAG,  "кнопка назад image урл " + navigateUrl);
+        startActivity(new Intent(Image.this, Main.class).putExtra("url", navigateUrl));
 
     }
 

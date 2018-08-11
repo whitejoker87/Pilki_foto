@@ -42,6 +42,10 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
 
     public static String LOG_TAG = "my_log";
 
+    private BroadcastReceiver receiver;
+
+
+
     /*public static ArrayList<RowBrowser> getListBrowser() {
         return listBrowser;
     }
@@ -86,7 +90,7 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
 
 
 
-        BroadcastReceiver receiver = new BroadcastReceiver() {
+        receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 
@@ -168,11 +172,11 @@ public class Login extends AppCompatActivity/* implements LoaderCallbacks<Cursor
         }
     }
 
-    /*@Override
+    @Override
     public void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onDestroy();
-    }*/
+    }
 
     /*public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 

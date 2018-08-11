@@ -28,7 +28,7 @@ import java.util.List;
 public class Main extends AppCompatActivity {
 
     //RowBrowserAdapter rowBrowserAdapter;
-    ArrayAdapter<RowBrowser> rowBrowserAdapter;
+    //ArrayAdapter<RowBrowser> rowBrowserAdapter;
     RecyclerView recyclerViewBrowser;
     //String base64login;
     ArrayList<RowBrowser> listBrowser;
@@ -41,12 +41,16 @@ public class Main extends AppCompatActivity {
 
     private RowBrowserViewModel rowBrowserViewModel;
 
+    BroadcastReceiver receiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
         rowBrowserDao = RowBrowserDatabase.getRowBrowserDatabase(this).getRowBrowserDao();
+
+        navigateUrl = getIntent().getStringExtra("url");
 
         //listBrowser = (ArrayList<RowBrowser>) rowBrowserDao.getListBrowser();
         //rowBrowserDatabase = App.getInstance().getRowBrowserDatabase();
@@ -64,7 +68,7 @@ public class Main extends AppCompatActivity {
 
         rowBrowserViewModel = ViewModelProviders.of(this).get(RowBrowserViewModel.class);//получаем ViewModel
 
-        rowBrowserViewModel.getListBrowser().observe(this, new Observer<List<RowBrowser>>() {//наблюдатель для LiveData
+                rowBrowserViewModel.getListBrowser().observe(this, new Observer<List<RowBrowser>>() {//наблюдатель для LiveData
             @Override
             public void onChanged(@Nullable final List<RowBrowser> rowBrowserList) {
                 // Update the cached copy of the words in the adapter.
@@ -72,55 +76,35 @@ public class Main extends AppCompatActivity {
             }
         });
 
-        //recyclerViewBrowser.setAdapter(adapter);
-
-        recyclerViewBrowser.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-                Log.d(LOG_TAG,  "number of row     " + e.getActionIndex());
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-            }
-
-            /*@Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                //String addUrl = listBrowser.get(position).getLink();
-                Log.d(LOG_TAG, "position перед getLink " + position);
-                //String rowLink = rowBrowserDao.getRow(position+1).getLink();//сделать нормально
-                //Login.setURL(Login.getURL() + addUrl);
-                //navigateUrl = App.STARTURL + rowLink;
-                navigateUrl = rowBrowserViewModel.getRow(position+1).getValue().getLink();//сделать нормально//остаем данные из LiveData
-                Log.d(LOG_TAG,  "full url     " + navigateUrl);
-                if (navigateUrl.contains(".jpg")) {
-                    Intent intent = new Intent(Main.this, Image.class);
-                    //intent.putExtra("base64login", base64login);
-                    intent.putExtra("navigateUrl", navigateUrl);
-                    startActivity(intent);//открываем новую активность
-                    finish();
-                }else {
-                    //new BrowserNavigateTask().execute();
-                    startService(new Intent(Main.this,DownloadIntentService.class).putExtra("url", navigateUrl));
+        ItemClickSupport.addTo(recyclerViewBrowser).setOnItemClickListener(
+                new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        //String addUrl = listBrowser.get(position).getLink();
+                        Log.d(LOG_TAG, "position перед getLink " + position);
+                        listBrowser = (ArrayList<RowBrowser>) rowBrowserViewModel.getListBrowser().getValue();
+                        assert listBrowser != null;
+                        navigateUrl = listBrowser.get(position).getLink();//сделать нормально//остаем данные из LiveData
+                        Log.d(LOG_TAG, "full url     " + navigateUrl);
+                        if (navigateUrl.contains(".jpg")) {
+                            Intent intent = new Intent(Main.this, Image.class);
+                            intent.putExtra("navigateUrl", navigateUrl);
+                            startActivity(intent);//открываем новую активность
+                            finish();
+                        } else {
+                            startService(new Intent(Main.this, DownloadIntentService.class).putExtra("url", navigateUrl));
                     /*if (base64login != null) {
                         Intent intent = new Intent(Main.this, Main.class);
                         intent.putExtra("base64login", base64login);
                         intent.putExtra("navigateUrl", navigateUrl);
                         startActivity(intent);//открываем новую активность
                     }*/
-                    /*rowBrowserAdapter.notifyDataSetChanged();
-                }
-            }*/
-        });
+                            //rowBrowserAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
 
-        BroadcastReceiver receiver = new BroadcastReceiver() {
+        receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 //String someValue = intent.getStringExtra("someName");
@@ -151,11 +135,16 @@ public class Main extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-//        Login.setURL(Login.getURL().substring(0, Login.getURL().lastIndexOf('/')));
-        navigateUrl = navigateUrl.substring(0, navigateUrl.lastIndexOf('/'));
-        //new BrowserNavigateTask().execute();
-        startService(new Intent().putExtra("url", navigateUrl));
+        if (navigateUrl == null || navigateUrl.equals(App.STARTURL)) {
+            startActivity(new Intent(Main.this, Login.class));
+            finish();
+        } else {
+            //super.onBackPressed();
+            navigateUrl = navigateUrl.substring(0, navigateUrl.lastIndexOf('/'));
+            Log.d(LOG_TAG,  "кнопка назад урл " + navigateUrl);
+            startService(new Intent(Main.this, DownloadIntentService.class).putExtra("url", navigateUrl));
+        }
+
 
     }
 
@@ -165,56 +154,9 @@ public class Main extends AppCompatActivity {
         //rowBrowserAdapter.notifyDataSetChanged();
     }
 
-    /*blic void onRecycleItemClick(View view) {
-        Log.d(LOG_TAG, "position перед getLink " + rowBrowserViewModel.getRow());
-        //String rowLink = rowBrowserDao.getRow(position+1).getLink();//сделать нормально
-        //Login.setURL(Login.getURL() + addUrl);
-        //navigateUrl = App.STARTURL + rowLink;
-        navigateUrl = rowBrowserDao.getRow(position+1).getLink();//сделать нормально
-        Log.d(LOG_TAG,  "full url     " + navigateUrl);
-        if (navigateUrl.contains(".jpg")) {
-            Intent intent = new Intent(Main.this, Image.class);
-            //intent.putExtra("base64login", base64login);
-            intent.putExtra("navigateUrl", navigateUrl);
-            startActivity(intent);//открываем новую активность
-            finish();
-        }else {
-            //new BrowserNavigateTask().execute();
-            startService(new Intent(Main.this,DownloadIntentService.class).putExtra("url", navigateUrl));
-                    /*if (base64login != null) {
-                        Intent intent = new Intent(Main.this, Main.class);
-                        intent.putExtra("base64login", base64login);
-                        intent.putExtra("navigateUrl", navigateUrl);
-                        startActivity(intent);//открываем новую активность
-                    }*/
-                    /*rowBrowserAdapter.notifyDataSetChanged();
+    @Override
+    public void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        super.onDestroy();
     }
-
-    /*public class BrowserNavigateTask extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void... params) {
-
-            HtmlParser htmlParser = new HtmlParser(base64login, navigateUrl);
-            if (htmlParser.getParseHtml()){
-                return base64login;
-            }
-
-            return null;
-
-        }
-
-        @Override
-        protected void onPostExecute(final String base64login) {
-
-            if (base64login != null) {
-                Intent intent = new Intent(Main.this, Main.class);
-                intent.putExtra("base64login", base64login);
-                intent.putExtra("navigateUrl", navigateUrl);
-                startActivity(intent);//открываем новую активность
-                //startActivity(new Intent(Login.this, Main.class));
-                //finish();
-            }
-        }
-    }*/
 }

@@ -5,6 +5,7 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
@@ -22,7 +23,8 @@ public abstract class RowBrowserDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             RowBrowserDatabase.class, "rowBrowserDatabase")
-                            .addCallback(sRoomDatabaseCallback)
+                            //.addCallback(sRoomDatabaseCallback)
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }
@@ -30,7 +32,9 @@ public abstract class RowBrowserDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    private static RoomDatabase.Callback sRoomDatabaseCallback =
+
+
+    /*private static RoomDatabase.Callback sRoomDatabaseCallback =
             new RoomDatabase.Callback(){
 
                 @Override
@@ -38,7 +42,7 @@ public abstract class RowBrowserDatabase extends RoomDatabase {
                     super.onOpen(db);
                     //new PopulateDbAsync(INSTANCE).execute();
                 }
-            };
+            };*/
 
     /*private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
 
