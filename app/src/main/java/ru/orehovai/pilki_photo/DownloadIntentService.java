@@ -1,4 +1,4 @@
-package ru.orehovai.pilki_foto;
+package ru.orehovai.pilki_photo;
 
 import android.app.IntentService;
 import android.content.Intent;

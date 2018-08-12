@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Pilki_foto</string>
+    <string name="app_name">Pilki_photo</string>
     <string name="title_activity_login">Введите логин и пароль</string>
 
     <!-- Strings related to login -->
@@ -16,8 +16,6 @@
     </string>
 
     <string name="title_activity_image">Фото</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="no_folder">No Folder</string>
     <string name="close_button">Закрыть</string>
 </resources>
