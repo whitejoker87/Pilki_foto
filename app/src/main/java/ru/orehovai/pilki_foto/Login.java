@@ -154,5 +154,24 @@ public class Login extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onDestroy();
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            finishAndRemoveTask();
+        }
+        else
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            {
+                finishAffinity();
+            } else
+            {
+                finish();
+            }
+        }
+    }
 }
 

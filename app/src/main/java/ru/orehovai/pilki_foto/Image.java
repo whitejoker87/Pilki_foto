@@ -189,6 +189,7 @@ public class Image extends AppCompatActivity {
         navigateUrl = navigateUrl.substring(0, navigateUrl.lastIndexOf('/'));
         //Log.d(LOG_TAG,  "кнопка назад image урл " + navigateUrl);
         startActivity(new Intent(Image.this, Main.class).putExtra("url", navigateUrl));
+        finish();
 
     }
 }

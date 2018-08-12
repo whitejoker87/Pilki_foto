@@ -68,7 +68,7 @@ public class RowBrowserAdapter extends RecyclerView.Adapter<RowBrowserAdapter.Ro
 
     void setListBrowserStudy(List<RowBrowser> listBrowser){
         for (RowBrowser rb:listBrowser) {
-            if (rb.getTitle().contains("Караваевская")) {
+            if (rb.getTitle().contains(App.studyName)) {
                 listBrowser.clear();
                 listBrowser.add(rb);
                 break;
