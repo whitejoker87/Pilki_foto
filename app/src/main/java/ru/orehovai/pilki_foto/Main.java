@@ -1,6 +1,5 @@
 package ru.orehovai.pilki_foto;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
@@ -13,7 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-//import android.util.Log;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class Main extends AppCompatActivity {
 
     private String navigateUrl;
 
-    //public static String LOG_TAG = "my_log";
+    public static String LOG_TAG = "my_log";
 
     private RowBrowserViewModel rowBrowserViewModel;
 
@@ -50,11 +49,12 @@ public class Main extends AppCompatActivity {
 
         rowBrowserViewModel = ViewModelProviders.of(this).get(RowBrowserViewModel.class);//получаем ViewModel
 
-                rowBrowserViewModel.getListBrowser().observe(this, new Observer<List<RowBrowser>>() {//наблюдатель для LiveData
+        rowBrowserViewModel.getListBrowser().observe(this, new Observer<List<RowBrowser>>() {//наблюдатель для LiveData
             @Override
             public void onChanged(@Nullable final List<RowBrowser> rowBrowserList) {
                 // Update the cached copy of the words in the adapter.
-                adapter.setListBrowser(rowBrowserList);
+                if (navigateUrl.equals("http://84.52.96.184:8088/foto")) adapter.setListBrowserDesc(rowBrowserList);
+                else adapter.setListBrowserStudy(rowBrowserList);
             }
         });
 
@@ -82,7 +82,7 @@ public class Main extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 navigateUrl = intent.getStringExtra("url");
-                //Log.d(LOG_TAG,  "Получаю ответ из сервиса в мейн");
+                Log.d(LOG_TAG,  "url из ответа в мейн " + navigateUrl);
             }
         };
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("openMain"));
@@ -99,8 +99,6 @@ public class Main extends AppCompatActivity {
             //Log.d(LOG_TAG,  "кнопка назад урл " + navigateUrl);
             startService(new Intent(Main.this, DownloadIntentService.class).putExtra("url", navigateUrl));
         }
-
-
     }
 
     @Override

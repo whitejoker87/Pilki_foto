@@ -10,20 +10,14 @@ public class RowBrowserViewModel extends AndroidViewModel {
 
     private RowsRepository rowsRepository;
     private LiveData<List<RowBrowser>> mListBrowser;
-    private LiveData<RowBrowser> mRow;
 
-     public RowBrowserViewModel(Application application) {
-         super(application);
-         rowsRepository = new RowsRepository(application);
-         mListBrowser = rowsRepository.getListBrowser();
-     }
-
-     LiveData<List<RowBrowser>> getListBrowser() {
-         return mListBrowser;
+    public RowBrowserViewModel(Application application) {
+        super(application);
+        rowsRepository = new RowsRepository(application);
+        mListBrowser = rowsRepository.getListBrowser();
     }
 
-    LiveData<RowBrowser> getRow(int id) {
-         return rowsRepository.getRow(id);
+    LiveData<List<RowBrowser>> getListBrowser() {
+        return mListBrowser;
     }
-    public void navigate(String url) { rowsRepository.navigate(); }
 }

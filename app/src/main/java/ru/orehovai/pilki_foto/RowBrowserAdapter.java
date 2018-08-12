@@ -1,10 +1,11 @@
 package ru.orehovai.pilki_foto;
 
+import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-//import android.util.Log;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,7 @@ import android.widget.TextView;
 
 public class RowBrowserAdapter extends RecyclerView.Adapter<RowBrowserAdapter.RowBrowserViewHolder> {
 
-    //public static String LOG_TAG = "my_log";
+    public static String LOG_TAG = "my_log";
 
     class RowBrowserViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvTitleRowBrowser;
@@ -59,6 +60,24 @@ public class RowBrowserAdapter extends RecyclerView.Adapter<RowBrowserAdapter.Ro
         mListBrowser = listBrowser;
         notifyDataSetChanged();
     }
+
+    void setListBrowserDesc(List<RowBrowser> listBrowser){
+        Collections.reverse(listBrowser);
+        setListBrowser(listBrowser);
+    }
+
+    void setListBrowserStudy(List<RowBrowser> listBrowser){
+        for (RowBrowser rb:listBrowser) {
+            if (rb.getTitle().contains("Караваевская")) {
+                listBrowser.clear();
+                listBrowser.add(rb);
+                break;
+            }
+        }
+        setListBrowser(listBrowser);
+    }
+
+
 
     // getItemCount() is called many times, and when it is first called,
     // mWords has not been updated (means initially, it's null, and we can't return null).

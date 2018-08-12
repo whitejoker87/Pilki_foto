@@ -1,7 +1,8 @@
 package ru.orehovai.pilki_foto;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
-//import android.util.Log;
+import android.util.Log;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -9,15 +10,21 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class HtmlParser {
+import java.util.ArrayList;
+import java.util.List;
+
+public class
+HtmlParser {
 
 
-    //public static String LOG_TAG = "my_log";
+    public static String LOG_TAG = "my_log";
 
     private String url;
     private RowBrowser rowBrowser;
     private RowBrowserDatabase rowBrowserDatabase;
     private RowBrowserDao rowBrowserDao;
+
+    private List<RowBrowser> listBrowser;
 
     HtmlParser(Context context, String url)  {
         this.url = url;
@@ -28,6 +35,7 @@ public class HtmlParser {
         rowBrowserDao.nukeTable();
 
         try {
+            listBrowser = new ArrayList<>();
 
             Connection connection = Jsoup
                     .connect(url)
@@ -68,8 +76,10 @@ public class HtmlParser {
                         //Log.d(LOG_TAG, _id + "   " + _title + "   " + _size + "   " + _timeStamp + "   " + _hints + "  " + _link);
                         rowBrowser = new RowBrowser(_id, _title, _size, _timeStamp, _hints, _link);
                     }
-                    if (!(_title.equals(""))) rowBrowserDao.insert(rowBrowser);//добавляем элемени в список
+                    //if (!(_title.equals(""))) rowBrowserDao.insert(rowBrowser);//добавляем элемени в список
+                    if (!(_title.equals(""))) listBrowser.add(rowBrowser);//добавляем элемени в список
                 }
+                rowBrowserDao.insertAll(listBrowser);
             }   else  rowBrowserDao.insert(new RowBrowser(0, "Error", " " + response.statusCode(), null, null, null));
         } catch (Exception e) {
             e.printStackTrace();

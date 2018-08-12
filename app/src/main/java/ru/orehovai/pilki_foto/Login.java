@@ -29,7 +29,7 @@ public class Login extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
 
-    //public static String LOG_TAG = "my_log";
+    public static String LOG_TAG = "my_log";
 
     private BroadcastReceiver receiver;
 
@@ -71,8 +71,9 @@ public class Login extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
 
                 showProgress(false);
-                //Log.d(LOG_TAG,  "Получаю ответ из сервиса в логин");
+                Log.d(LOG_TAG,  "url in login onreceive " + getIntent().getStringExtra("url"));
                 intent = new Intent(Login.this, Main.class);
+                intent.putExtra("url", App.STARTURL);
                 startActivity(intent);//открываем новую активность
                 finish();
             }

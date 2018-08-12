@@ -10,7 +10,6 @@ public class RowBrowser {
     private int id;
     @NonNull
     private String title;
-
     private String size;
     private String timeStamp;
     private String hits;
